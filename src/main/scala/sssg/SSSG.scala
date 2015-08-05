@@ -5,11 +5,11 @@ import java.nio.file._
 import java.util
 
 import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.scalalogging.LazyLogging
 import de.neuland.jade4j.JadeConfiguration
 import de.neuland.jade4j.template.JadeTemplate
 import org.apache.commons.io.{FileUtils, FilenameUtils}
 import org.pegdown.PegDownProcessor
-import scopt.OptionParser
 import sssg.ConfigKeys._
 import scala.collection.JavaConversions._
 
@@ -18,23 +18,24 @@ import scala.io.{BufferedSource, Source}
 case class Content(markdown: String, meta: Map[String, String]) {
   def html(): String = {
     new PegDownProcessor().markdownToHtml(markdown)
+    Some
   }
 }
 
 
 case class Error(msg: String)
 
-case class SSSG(config: Config) {
+case class SSSG(config: Config) extends LazyLogging {
 
+  val TEMPLATE_PATH = s"${config.getString(themePath)}/${config.getString(theme)}/templates/"
   val PAGE_TEMPLATE_PATH = s"${config.getString(themePath)}/${config.getString(theme)}/templates/page.jade"
   val STATIC_FILES_PATH = s"${config.getString(themePath)}/${config.getString(theme)}/static/"
   val OUTPUT_PATH = s"${config.getString(outputPath)}"
+  val PAGES_PATH: String = s"${config.getString(contentPath)}/${config.getString(pagesPath)}"
+  val ARTICLES_PATH: String = s"${config.getString(contentPath)}/${config.getString(articlesPath)}"
 
   def build(): Unit = {
-    // get content for pages
-    // get template
-    // copy static files
-    // render html to file
+    logger.debug(s"Building with config: ${config.getConfig("sssg")}")
     val pages = parsePages()._1
     val jadeConfig: JadeConfiguration = new JadeConfiguration()
     jadeConfig.setSharedVariables(getSharedVariables)
@@ -51,25 +52,26 @@ case class SSSG(config: Config) {
     pages.foreach(p => {
       val file: String = p.meta.getOrElse("save_as", "index.html")
       val directory: File = new File(output, FilenameUtils.getPath(file))
-      if(!directory.exists()){
+      if (!directory.exists()) {
         directory.mkdirs()
       }
       val pageFile = new File(directory, FilenameUtils.getName(file))
       val writer: FileWriter = new FileWriter(pageFile)
-      jadeConfig.renderTemplate(template, p.meta,  writer)
-      println(s"Processed ${pageFile}")
+      val model: util.Map[String, AnyRef] = p.meta + (("content", p.html())) + (("pages", pages.toArray))
+      jadeConfig.renderTemplate(template, model, writer)
+      logger.debug(s"Processed ${pageFile.getCanonicalPath}")
       writer.flush()
       writer.close()
     })
   }
 
   def parsePages(): (Iterable[Content], Iterable[Error]) = {
-    val file: File = new File(s"${config.getString(contentPath)}/${config.getString(pagesPath)}")
+    val file: File = new File(PAGES_PATH)
     getContent(file)
   }
 
   def parseArticles(): (Iterable[Content], Iterable[Error]) = {
-    val file: File = new File(s"${config.getString(contentPath)}/${config.getString(articlesPath)}")
+    val file: File = new File(ARTICLES_PATH)
     getContent(file)
   }
 
@@ -84,8 +86,13 @@ case class SSSG(config: Config) {
   private def getContent(file: File): (Iterable[Content], Iterable[Error]) = {
     walkTree(file).foldLeft((Seq[Content](), Seq[Error]()))((l, f) => {
       process(f) match {
-        case Right(x) => (l._1 :+ x, l._2)
-        case Left(x) => (l._1, l._2 :+ x)
+        case Right(x) => {
+          (l._1 :+ x, l._2)
+        }
+        case Left(x) => {
+          logger.error(x.msg)
+          (l._1, l._2 :+ x)
+        }
       }
     })
   }
@@ -103,6 +110,7 @@ case class SSSG(config: Config) {
   }
 
   private def process(file: File): Either[Error, Content] = {
+    logger.debug(s"Found content: ${file.getAbsolutePath}")
     val source: BufferedSource = Source.fromFile(file)
     val strings: Array[String] = source.mkString.split("-{5,}")
     strings.size match {
@@ -116,13 +124,13 @@ case class SSSG(config: Config) {
             m
           }
         })
+        logger.debug(s"Parsed content with meta: ${meta.mkString}")
         Right(Content(strings(1), meta))
     }
   }
 
 }
 
-case class Arguments(out: String = null)
 
 object SSSG {
 

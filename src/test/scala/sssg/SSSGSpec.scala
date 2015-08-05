@@ -2,6 +2,7 @@ package sssg
 
 import java.io.File
 
+import com.typesafe.config.{ConfigValueFactory, ConfigValue, ConfigFactory, Config}
 import org.scalatest.{FlatSpec, Matchers}
 import sssg.ConfigKeys._
 
@@ -34,7 +35,9 @@ class SSSGSpec extends FlatSpec with Matchers{
   }
 
   it should "render content correctly" in {
-    val sssg: SSSG = SSSG()
+    var config: Config = ConfigFactory.load()
+    config = config.withValue(ConfigKeys.outputPath, ConfigValueFactory.fromAnyRef("../../../target/tmp/") )
+    val sssg: SSSG = SSSG(config)
     val pages = sssg.parseArticles()
     pages._1.size shouldBe 1
     pages._2.size shouldBe 0
