@@ -1,5 +1,6 @@
 title: test article
-save_as: url/article.html
+save_as: article.html
+category: test
 
 -----
 

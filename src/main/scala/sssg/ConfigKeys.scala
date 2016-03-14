@@ -9,4 +9,5 @@ object ConfigKeys {
   val lang = "sssg.DEFAULT_LANG"
   val author = "sssg.AUTHOR"
   val outputPath = "sssg.OUTPUT_PATH"
+  val articlesPerPage = "sssg.ARTICLES_PER_PAGE"
 }

@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "ch.qos.logback" % "logback-classic" % "1.1.3",
   "com.nanohttpd" % "nanohttpd-webserver" % "2.1.1",
+  "com.github.slugify" % "slugify" % "2.1.4",
   "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test"
 )
 

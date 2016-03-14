@@ -5,7 +5,7 @@ import java.nio.file.StandardWatchEventKinds._
 import java.nio.file._
 import java.util.concurrent.Executors
 
-import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
+import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 import fi.iki.elonen.SimpleWebServer
 import scopt.OptionParser
@@ -30,10 +30,9 @@ object Main extends LazyLogging {
 
     parser.parse(args, Arguments()) match {
       case Some(arguments) =>
-        var config: Config = ConfigFactory.load()
-        if (arguments.out != null)
-          config = config.withValue(ConfigKeys.outputPath, ConfigValueFactory.fromAnyRef(arguments.out))
-        val sssg: SSSG = SSSG(config)
+        val sssg: SSSG = new SSSG with JadeRenderer {
+          override def config: Config = ConfigFactory.load()
+        }
         if (arguments.server) {
           sssg.build()
           startServer(new File(sssg.OUTPUT_PATH))
@@ -76,14 +75,15 @@ object Main extends LazyLogging {
       // arguments are bad, error message will have been displayed
     }
   }
+
   val executor = Executors.newFixedThreadPool(1)
 
-  private def startServer(root: File): Unit ={
+  private def startServer(root: File): Unit = {
     executor.submit(new Runnable {
-      override def run(): Unit ={
+      override def run(): Unit = {
         val server: SimpleWebServer = new SimpleWebServer("localhost", 8000, root, true)
         server.start()
-        while(server.isAlive){
+        while (server.isAlive) {
 
         }
       }
