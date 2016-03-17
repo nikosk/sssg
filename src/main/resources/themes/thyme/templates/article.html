@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorator="master">
+	<head>
+		<title>Content page 1</title>
+	</head>
+	<body>
+		<!--/*@thymesVar id="article" type="sssg.domain.Content"*/-->
+		<section layout:fragment="content">
+			<h2 th:text="${article.meta.title}">
+				Title
+			</h2>
+			<p th:utext="${article.html()}"></p>
+		</section>
+		<footer>
+			<p layout:fragment="custom-footer">This is some footer content from content page 1</p>
+		</footer>
+	</body>
+</html>

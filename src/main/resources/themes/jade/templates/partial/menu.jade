@@ -1,0 +1,4 @@
+h1 menu
+span #{pages}
+each p in site.pages
+    a(href="#{BASE_URL}/#{p.path}") #{p.meta.title}

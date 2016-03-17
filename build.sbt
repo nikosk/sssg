@@ -9,11 +9,13 @@ resolvers += Resolver.sonatypeRepo("public")
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.0",
   "org.pegdown" % "pegdown" % "1.5.0",
-  "de.neuland-bfi" % "jade4j" % "0.4.3",
+  "de.neuland-bfi" % "jade4j" % "1.1.4",
+  "org.thymeleaf" % "thymeleaf" % "2.1.4.RELEASE",
+  "nz.net.ultraq.thymeleaf" % "thymeleaf-layout-dialect" % "1.3.3",
   "com.github.scopt" %% "scopt" % "3.3.0",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "ch.qos.logback" % "logback-classic" % "1.1.3",
-  "com.nanohttpd" % "nanohttpd-webserver" % "2.1.1",
+  "com.nanohttpd" % "nanohttpd-webserver" % "2.2.0",
   "com.github.slugify" % "slugify" % "2.1.4",
   "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test"
 )

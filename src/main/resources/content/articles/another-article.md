@@ -1,6 +1,7 @@
-title: test article
+title: another article
 category: test
 
 -----
+
 
 *Test*

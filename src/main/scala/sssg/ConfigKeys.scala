@@ -6,6 +6,7 @@ object ConfigKeys {
   val pagesPath = "sssg.PAGES_PATH"
   val themePath = "sssg.THEME_PATH"
   val theme = "sssg.THEME"
+  val themeEngine = "sssg.THEME_ENGINE"
   val lang = "sssg.DEFAULT_LANG"
   val author = "sssg.AUTHOR"
   val outputPath = "sssg.OUTPUT_PATH"

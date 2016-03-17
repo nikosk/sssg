@@ -1,0 +1,13 @@
+doctype html
+html(lang='#{LANG}')
+    head
+        meta(charset='utf-8')
+        title= title
+        meta(name='description', content='#{description}')
+        meta(name='author', content='#{AUTHOR}')
+        link(href="#{BASE_URL}/css/local.css", rel="stylesheet")
+
+    body
+        include partial/menu
+        block content
+        include partial/analytics

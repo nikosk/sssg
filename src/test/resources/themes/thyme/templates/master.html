@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<title>Layout page</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/base-min.css"/>
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/menus-min.css"/>
+		<link href="/static/css/main.css" rel="stylesheet"/>
+	</head>
+
+	<body>
+		<!--/*@thymesVar id="site" type="sssg.domain.Site"*/-->
+		<header class="Grid">
+			<div class="Cell -3of12">
+				<h1>Thyme</h1>
+			</div>
+			<div class="Cell -9of12">
+				<div class="pure-menu pure-menu-horizontal">
+					<ul class="pure-menu-list">
+						<li class="pure-menu-item" th:each="p : ${site.getPages()}">
+							<a th:href="${site.meta.get('BASE_URL') + '/' + p.path}"
+							   class="pure-menu-link"
+							   th:text="${p.getMeta().get('title')}">News</a>
+						</li>
+						<li class="pure-menu-item" th:each="c : ${site.getCategories()}">
+							<a th:href="${site.meta.get('BASE_URL') + '/' + c.getPath()}"
+							   class="pure-menu-link"
+							   th:text="${c.name}">News</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<hr/>
+		</header>
+		<div class="Grid">
+			<div class="Cell -3of12">3of12</div>
+			<div class="Cell -9of12">
+				<section layout:fragment="content">
+					<p>Page content goes here</p>
+				</section>
+			</div>
+		</div>
+		<footer>
+			<p>My footer</p>
+			<p layout:fragment="custom-footer">Custom footer here</p>
+		</footer>
+	</body>
+
+</html>
